@@ -6,12 +6,39 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        olive: {
+          50: '#F4F7F3',
+          100: '#E6ECE5',
+          200: '#C9D1C7',
+          300: '#A5B1A4',
+          400: '#839383',
+          500: '#6C7C6D',
+          600: '#5B6B5C',
+          700: '#4A5A4B',
+          800: '#3A4A3B',
+          900: '#2D3A2E',
+        },
+        gold: {
+          50: '#FEF9F0',
+          100: '#FBF1DC',
+          200: '#F6E0B3',
+          300: '#F0CF8A',
+          400: '#E8BD6E',
+          500: '#DCAA59',
+          600: '#C59D5F',
+          700: '#B5894A',
+        },
+        cream: {
+          50: '#FAF7F2',
+          100: '#F3EEE5',
+        },
+      },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        serif: ['"Playfair Display"', 'ui-serif', 'Georgia', 'Cambria', 'serif'],
         geist: ['Geist', 'system-ui', 'sans-serif'],
         'geist-mono': ['Geist Mono', 'monospace'],
-        mona: ['Mona Sans', 'system-ui', 'sans-serif'],
-        'ibm-plex': ['IBM Plex Sans', 'system-ui', 'sans-serif'],
         manrope: ['Manrope', 'system-ui', 'sans-serif'],
       },
       animation: {
