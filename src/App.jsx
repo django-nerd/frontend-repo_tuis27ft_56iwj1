@@ -41,7 +41,7 @@ const translations = {
       },
     },
     gallery: { heading: 'Gallery' },
-    specials: { heading: "Specials & Chef’s Picks" },
+    specials: { heading: 'Specials & Chef’s Picks' },
     reservations: {
       heading: 'Reservations',
       name: 'Full Name',
@@ -155,28 +155,28 @@ const translations = {
 
 const menuData = {
   starters: [
-    { name: 'Bruschetta al Pomodoro', desc: 'Toasted bread, tomatoes, basil, olive oil', price: '900 DZD' },
-    { name: 'Burrata e Prosciutto', desc: 'Creamy burrata, cured ham, arugula', price: '2,200 DZD' },
+    { name: 'Bruschetta al Pomodoro', desc: 'Toasted bread, tomatoes, basil, olive oil', price: '900 DZD', img: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=800&auto=format&fit=crop' },
+    { name: 'Burrata e Prosciutto', desc: 'Creamy burrata, cured ham, arugula', price: '2,200 DZD', img: 'https://images.unsplash.com/photo-1540712129860-8a5b76a1f2d4?q=80&w=800&auto=format&fit=crop' },
   ],
   pastas: [
-    { name: 'Tagliatelle al Ragù', desc: 'Slow-cooked beef ragù, Parmigiano', price: '2,100 DZD' },
-    { name: 'Spaghetti alle Vongole', desc: 'Clams, garlic, white wine, parsley', price: '2,500 DZD' },
+    { name: 'Tagliatelle al Ragù', desc: 'Slow-cooked beef ragù, Parmigiano', price: '2,100 DZD', img: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?q=80&w=800&auto=format&fit=crop' },
+    { name: 'Spaghetti alle Vongole', desc: 'Clams, garlic, white wine, parsley', price: '2,500 DZD', img: 'https://images.unsplash.com/photo-1523986371872-9d3ba2e2f642?q=80&w=800&auto=format&fit=crop' },
   ],
   pizzas: [
-    { name: 'Margherita D.O.P.', desc: 'San Marzano tomatoes, mozzarella, basil', price: '1,600 DZD' },
-    { name: 'Diavola', desc: 'Spicy salami, fior di latte, chili oil', price: '1,900 DZD' },
+    { name: 'Margherita D.O.P.', desc: 'San Marzano tomatoes, mozzarella, basil', price: '1,600 DZD', img: 'https://images.unsplash.com/photo-1548365328-8b849e4c4a38?q=80&w=800&auto=format&fit=crop' },
+    { name: 'Diavola', desc: 'Spicy salami, fior di latte, chili oil', price: '1,900 DZD', img: 'https://images.unsplash.com/photo-1547106634-56dcd53ae883?q=80&w=800&auto=format&fit=crop' },
   ],
   mains: [
-    { name: 'Branzino al Forno', desc: 'Baked sea bass, lemon, herbs', price: '3,800 DZD' },
-    { name: 'Pollo alla Milanese', desc: 'Crispy breaded chicken, salad', price: '2,900 DZD' },
+    { name: 'Branzino al Forno', desc: 'Baked sea bass, lemon, herbs', price: '3,800 DZD', img: 'https://images.unsplash.com/photo-1617195737497-5e0bd5f0cc49?q=80&w=800&auto=format&fit=crop' },
+    { name: 'Pollo alla Milanese', desc: 'Crispy breaded chicken, salad', price: '2,900 DZD', img: 'https://images.unsplash.com/photo-1505575972945-28054f4b0550?q=80&w=800&auto=format&fit=crop' },
   ],
   desserts: [
-    { name: 'Tiramisu', desc: 'Espresso-soaked ladyfingers, mascarpone', price: '1,200 DZD' },
-    { name: 'Panna Cotta', desc: 'Vanilla cream, berry coulis', price: '1,100 DZD' },
+    { name: 'Tiramisu', desc: 'Espresso-soaked ladyfingers, mascarpone', price: '1,200 DZD', img: 'https://images.unsplash.com/photo-1609167830220-7166bcb680b9?q=80&w=800&auto=format&fit=crop' },
+    { name: 'Panna Cotta', desc: 'Vanilla cream, berry coulis', price: '1,100 DZD', img: 'https://images.unsplash.com/photo-1603133872878-684f208fb84d?q=80&w=800&auto=format&fit=crop' },
   ],
   drinks: [
-    { name: 'Espresso', desc: 'Single shot Italian espresso', price: '400 DZD' },
-    { name: 'Limonata', desc: 'Fresh lemon soda', price: '600 DZD' },
+    { name: 'Espresso', desc: 'Single shot Italian espresso', price: '400 DZD', img: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop' },
+    { name: 'Limonata', desc: 'Fresh lemon soda', price: '600 DZD', img: 'https://images.unsplash.com/photo-1568440462986-8d2020b6f6b1?q=80&w=800&auto=format&fit=crop' },
   ],
 }
 
@@ -357,12 +357,17 @@ function MenuSection({ t }) {
               </h3>
               <ul className="space-y-4">
                 {items.map((it, idx) => (
-                  <li key={idx} className="flex items-start justify-between border-b border-olive-100 pb-3">
-                    <div>
-                      <p className="font-medium text-olive-900">{it.name}</p>
-                      <p className="text-sm text-olive-700">{it.desc}</p>
+                  <li key={idx} className="flex items-center gap-3 border-b border-olive-100 pb-3">
+                    <img src={it.img} alt={it.name} className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-md shadow-sm flex-shrink-0" />
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="font-medium text-olive-900">{it.name}</p>
+                          <p className="text-sm text-olive-700">{it.desc}</p>
+                        </div>
+                        <span className="text-olive-900 font-semibold whitespace-nowrap">{it.price}</span>
+                      </div>
                     </div>
-                    <span className="text-olive-900 font-semibold">{it.price}</span>
                   </li>
                 ))}
               </ul>
