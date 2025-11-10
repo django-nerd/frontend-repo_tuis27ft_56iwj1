@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
-import { Phone, Instagram, Facebook, Star, Menu as MenuIcon, MapPin, Clock, Mail, ChevronDown, Download, MessageCircle } from 'lucide-react'
+import { useEffect, useMemo, useState, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Phone, Instagram, Facebook, Star, Menu as MenuIcon, MapPin, Clock, Mail, ChevronDown, Download, MessageCircle, ChevronLeft, ChevronRight, X } from 'lucide-react'
 
 const WHATSAPP_NUMBER = '+213555000000' // Replace with restaurant number
 
@@ -68,6 +68,7 @@ const translations = {
     footer: {
       rights: 'All rights reserved.',
       quickLinks: 'Quick Links',
+      backToTop: 'Back to Top',
     },
     ctas: { bookNow: 'Book Now', viewMenu: 'View Menu', findUs: 'Find Us' },
     seo: {
@@ -141,6 +142,7 @@ const translations = {
     footer: {
       rights: 'جميع الحقوق محفوظة.',
       quickLinks: 'روابط سريعة',
+      backToTop: 'العودة للأعلى',
     },
     ctas: { bookNow: 'احجز الآن', viewMenu: 'شاهد القائمة', findUs: 'اعثر علينا' },
     seo: {
@@ -204,6 +206,7 @@ function useLang() {
   useEffect(() => {
     document.documentElement.lang = lang === 'ar' ? 'ar' : 'en'
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'
+    document.documentElement.classList.add('scroll-smooth')
   }, [lang])
   return { lang, setLang, t }
 }
@@ -213,7 +216,7 @@ function SectionHeading({ children }) {
     <motion.h2
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: 0.6 }}
       className="text-3xl md:text-4xl font-serif tracking-tight text-olive-900 mb-6"
     >
@@ -224,6 +227,14 @@ function SectionHeading({ children }) {
 
 function Nav({ t, onToggleLang, lang }) {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   const items = [
     { href: '#home', label: t.nav.home },
     { href: '#about', label: t.nav.about },
@@ -235,7 +246,11 @@ function Nav({ t, onToggleLang, lang }) {
   ]
 
   return (
-    <div className="fixed top-0 inset-x-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/60 bg-white/70 border-b border-olive-100">
+    <motion.div
+      animate={{ backgroundColor: scrolled ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.55)', boxShadow: scrolled ? '0 6px 20px rgba(0,0,0,0.06)' : '0 0 0 rgba(0,0,0,0)' }}
+      className="fixed top-0 inset-x-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-olive-100"
+      transition={{ duration: 0.35 }}
+    >
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16">
           <a href="#home" className="flex items-center gap-2">
@@ -247,7 +262,7 @@ function Nav({ t, onToggleLang, lang }) {
                 {it.label}
               </a>
             ))}
-            <a href="#reservations" className="ml-2 inline-flex items-center rounded-full bg-gold-600 text-white px-4 py-2 hover:bg-gold-700 transition">
+            <a href="#reservations" className="ml-2 inline-flex items-center rounded-full bg-gold-600 text-white px-4 py-2 hover:bg-gold-700 transition shadow-[0_0_0_0_rgba(199,156,72,0.7)] hover:shadow-[0_0_25px_6px_rgba(199,156,72,0.35)] duration-300">
               {t.ctas.bookNow}
             </a>
             <LangSwitcher lang={lang} onToggle={onToggleLang} />
@@ -272,7 +287,7 @@ function Nav({ t, onToggleLang, lang }) {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
 
@@ -287,29 +302,52 @@ function LangSwitcher({ lang, onToggle }) {
 
 function Hero({ t }) {
   return (
-    <section id="home" className="relative h-[90vh] min-h-[560px] flex items-center">
-      <div className="absolute inset-0 -z-10 bg-[url('https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1600&auto=format&fit=crop')] bg-cover bg-center bg-fixed" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
+    <section id="home" className="relative h-[92vh] min-h-[560px] flex items-center overflow-hidden">
+      <video
+        className="absolute inset-0 w-full h-full object-cover -z-10"
+        autoPlay
+        playsInline
+        muted
+        loop
+        poster="https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1600&auto=format&fit=crop"
+        src="https://videos.pexels.com/video-files/3182791/3182791-uhd_2560_1440_25fps.mp4"
+      />
+      <div className="absolute inset-0 -z-10 bg-black/35" />
       <div className="max-w-7xl mx-auto px-4 md:px-6 w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-2xl">
           <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur px-3 py-1 rounded-full mb-4">
             <span className="w-2 h-2 rounded-full bg-gold-600" />
             <span className="text-sm text-olive-900">Le Farfalla</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-serif text-white tracking-tight drop-shadow-md">
+          <motion.h1
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.1 }}
+            className="text-5xl md:text-6xl font-serif text-white tracking-tight drop-shadow-md"
+          >
             {t.hero.title}
-          </h1>
-          <p className="mt-4 text-lg md:text-xl text-white/90 max-w-xl">
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.25 }}
+            className="mt-4 text-lg md:text-xl text-white/90 max-w-xl"
+          >
             {t.hero.tagline}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#reservations" className="inline-flex items-center rounded-full bg-gold-600 text-white px-6 py-3 hover:bg-gold-700 transition">
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.4 }}
+            className="mt-8 flex flex-wrap gap-3"
+          >
+            <a href="#reservations" className="inline-flex items-center rounded-full bg-gold-600 text-white px-6 py-3 hover:bg-gold-700 transition shadow-[0_0_0_0_rgba(199,156,72,0.7)] hover:shadow-[0_0_35px_10px_rgba(199,156,72,0.35)] duration-300">
               {t.hero.cta}
             </a>
             <a href="#menu" className="inline-flex items-center rounded-full bg-white/90 text-olive-900 px-6 py-3 hover:bg-white transition">
               {translations.en.ctas.viewMenu}
             </a>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
@@ -321,12 +359,12 @@ function About({ t }) {
     <section id="about" className="bg-cream-50">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24">
         <div className="grid md:grid-cols-2 gap-10 items-center">
-          <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-100px' }} transition={{ duration: 0.6 }}>
             <SectionHeading>{t.about.heading}</SectionHeading>
             <p className="text-olive-900/90 leading-relaxed mb-4">{t.about.text1}</p>
             <p className="text-olive-900/90 leading-relaxed">{t.about.text2}</p>
           </motion.div>
-          <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: '-100px' }} transition={{ duration: 0.6 }}>
             <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1200&auto=format&fit=crop" alt="Italian dining interior" className="rounded-xl shadow-lg" />
           </motion.div>
         </div>
@@ -351,14 +389,23 @@ function MenuSection({ t }) {
         <SectionHeading>{t.menu.heading}</SectionHeading>
         <div className="grid md:grid-cols-2 gap-10">
           {sections.map(([key, items]) => (
-            <div key={key} className="">
+            <div key={key}>
               <h3 className="text-xl font-serif text-olive-900 mb-4">
                 {t.menu.sections[key]}
               </h3>
               <ul className="space-y-4">
                 {items.map((it, idx) => (
-                  <li key={idx} className="flex items-center gap-3 border-b border-olive-100 pb-3">
-                    <img src={it.img} alt={it.name} className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-md shadow-sm flex-shrink-0" />
+                  <motion.li
+                    key={idx}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: idx * 0.03 }}
+                    className="group flex items-center gap-3 border-b border-olive-100 pb-3"
+                  >
+                    <div className="relative overflow-hidden rounded-md shadow-sm">
+                      <img src={it.img} alt={it.name} className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-md transition-transform duration-300 group-hover:scale-105" />
+                    </div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between gap-3">
                         <div>
@@ -368,7 +415,7 @@ function MenuSection({ t }) {
                         <span className="text-olive-900 font-semibold whitespace-nowrap">{it.price}</span>
                       </div>
                     </div>
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
             </div>
@@ -393,6 +440,12 @@ function Gallery({ t }) {
     'https://images.unsplash.com/photo-1542089363-7d9b7f2e6f5d?q=80&w=1200&auto=format&fit=crop',
     'https://images.unsplash.com/photo-1521389508051-d7ffb5dc8bbf?q=80&w=1200&auto=format&fit=crop',
   ]
+  const [lightbox, setLightbox] = useState({ open: false, index: 0 })
+  const open = (idx) => setLightbox({ open: true, index: idx })
+  const close = () => setLightbox({ open: false, index: 0 })
+  const prev = () => setLightbox((s) => ({ open: true, index: (s.index - 1 + images.length) % images.length }))
+  const next = () => setLightbox((s) => ({ open: true, index: (s.index + 1) % images.length }))
+
   return (
     <section id="gallery" className="bg-cream-50">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24">
@@ -403,13 +456,24 @@ function Gallery({ t }) {
               key={idx}
               src={src}
               alt={`Gallery ${idx + 1}`}
-              className="rounded-lg shadow-sm object-cover w-full h-44 md:h-64"
+              className="rounded-lg shadow-sm object-cover w-full h-44 md:h-64 cursor-zoom-in"
               whileHover={{ scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+              onClick={() => open(idx)}
             />
           ))}
         </div>
       </div>
+      <AnimatePresence>
+        {lightbox.open && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+            <button onClick={close} className="absolute top-5 right-5 text-white/90 hover:text-white"><X className="w-6 h-6"/></button>
+            <button onClick={prev} className="absolute left-4 md:left-8 text-white/90 hover:text-white"><ChevronLeft className="w-8 h-8"/></button>
+            <motion.img key={lightbox.index} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} src={images[lightbox.index]} alt="Preview" className="max-h-[80vh] max-w-[90vw] rounded-lg shadow-2xl object-contain" />
+            <button onClick={next} className="absolute right-4 md:right-8 text-white/90 hover:text-white"><ChevronRight className="w-8 h-8"/></button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
@@ -428,22 +492,46 @@ function Specials({ t }) {
       badge: 'Chef’s Pick',
       img: 'https://images.unsplash.com/photo-1600891964207-066095021b19?q=80&w=1200&auto=format&fit=crop',
     },
+    {
+      title: 'Seafood Risotto',
+      desc: 'Creamy carnaroli rice, prawns, calamari, saffron',
+      badge: 'Signature',
+      img: 'https://images.unsplash.com/photo-1604908554049-1e8b98cbfbac?q=80&w=1200&auto=format&fit=crop',
+    },
   ]
+  const [index, setIndex] = useState(0)
+  const containerRef = useRef(null)
+  const prev = () => setIndex((i) => (i - 1 + picks.length) % picks.length)
+  const next = () => setIndex((i) => (i + 1) % picks.length)
+
   return (
     <section id="specials" className="bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24">
         <SectionHeading>{t.specials.heading}</SectionHeading>
-        <div className="grid md:grid-cols-2 gap-6">
-          {picks.map((p, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className="rounded-xl overflow-hidden border border-olive-100 bg-white">
-              <img src={p.img} alt={p.title} className="w-full h-56 object-cover" />
-              <div className="p-5">
-                <span className="inline-flex text-xs px-2 py-1 rounded-full bg-olive-50 text-olive-800 border border-olive-200 mb-2">{p.badge}</span>
-                <h4 className="text-xl font-serif text-olive-900">{p.title}</h4>
-                <p className="text-olive-700 mt-1">{p.desc}</p>
+        <div className="relative overflow-hidden rounded-xl border border-olive-100" ref={containerRef}>
+          <motion.div className="flex" animate={{ x: `-${index * 100}%` }} transition={{ type: 'spring', stiffness: 200, damping: 28 }} style={{ width: `${picks.length * 100}%` }}>
+            {picks.map((p, i) => (
+              <div key={i} className="w-full md:w-full shrink-0">
+                <div className="grid md:grid-cols-2">
+                  <img src={p.img} alt={p.title} className="w-full h-64 md:h-96 object-cover" />
+                  <div className="p-6 md:p-8 bg-white">
+                    <span className="inline-flex text-xs px-2 py-1 rounded-full bg-olive-50 text-olive-800 border border-olive-200 mb-2">{p.badge}</span>
+                    <h4 className="text-2xl md:text-3xl font-serif text-olive-900">{p.title}</h4>
+                    <p className="text-olive-700 mt-2 text-lg">{p.desc}</p>
+                  </div>
+                </div>
               </div>
-            </motion.div>
-          ))}
+            ))}
+          </motion.div>
+          <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-3">
+            <button onClick={prev} aria-label="Previous" className="p-2 rounded-full bg-white/80 hover:bg-white shadow"><ChevronLeft className="w-5 h-5"/></button>
+            <button onClick={next} aria-label="Next" className="p-2 rounded-full bg-white/80 hover:bg-white shadow"><ChevronRight className="w-5 h-5"/></button>
+          </div>
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {picks.map((_, i) => (
+              <button key={i} onClick={() => setIndex(i)} className={`h-1.5 rounded-full transition-all ${index===i?'w-6 bg-gold-600':'w-2 bg-white/70'}`} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -460,48 +548,44 @@ function Reservations({ t }) {
     const msg = `Reservation Request:%0AName: ${form.name}%0APhone: ${form.phone}%0ADate: ${form.date}%0ATime: ${form.time}%0AGuests: ${form.guests}`
     window.open(`https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g, '')}?text=${msg}`, '_blank')
   }
+  const fields = [
+    { key: 'name', label: t.reservations.name, type: 'text' },
+    { key: 'phone', label: t.reservations.phone, type: 'text' },
+    { key: 'date', label: t.reservations.date, type: 'date' },
+    { key: 'time', label: t.reservations.time, type: 'time' },
+  ]
   return (
     <section id="reservations" className="bg-cream-50">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24">
         <SectionHeading>{t.reservations.heading}</SectionHeading>
         <div className="grid md:grid-cols-2 gap-10 items-start">
-          <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur p-6 rounded-xl border border-olive-100 shadow-sm">
+          <motion.form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur p-6 rounded-xl border border-olive-100 shadow-sm" initial="hidden" whileInView="show" viewport={{ once: true }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-olive-700 mb-1">{t.reservations.name}</label>
-                <input required name="name" value={form.name} onChange={handleChange} className="w-full rounded-md border border-olive-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold-600" />
-              </div>
-              <div>
-                <label className="block text-sm text-olive-700 mb-1">{t.reservations.phone}</label>
-                <input required name="phone" value={form.phone} onChange={handleChange} className="w-full rounded-md border border-olive-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold-600" />
-              </div>
-              <div>
-                <label className="block text-sm text-olive-700 mb-1">{t.reservations.date}</label>
-                <input type="date" required name="date" value={form.date} onChange={handleChange} className="w-full rounded-md border border-olive-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold-600" />
-              </div>
-              <div>
-                <label className="block text-sm text-olive-700 mb-1">{t.reservations.time}</label>
-                <input type="time" required name="time" value={form.time} onChange={handleChange} className="w-full rounded-md border border-olive-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold-600" />
-              </div>
-              <div>
+              {fields.map((f) => (
+                <motion.div key={f.key} variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
+                  <label className="block text-sm text-olive-700 mb-1">{f.label}</label>
+                  <input type={f.type} required name={f.key} value={form[f.key]} onChange={handleChange} className="w-full rounded-md border border-olive-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold-600" />
+                </motion.div>
+              ))}
+              <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
                 <label className="block text-sm text-olive-700 mb-1">{t.reservations.guests}</label>
                 <select name="guests" value={form.guests} onChange={handleChange} className="w-full rounded-md border border-olive-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold-600">
                   {Array.from({ length: 10 }, (_, i) => `${i + 1}`).map((g) => (
                     <option key={g} value={g}>{g}</option>
                   ))}
                 </select>
-              </div>
+              </motion.div>
             </div>
-            <button type="submit" className="mt-5 inline-flex items-center rounded-full bg-gold-600 text-white px-5 py-2.5 hover:bg-gold-700">
+            <motion.button type="submit" className="mt-5 inline-flex items-center rounded-full bg-gold-600 text-white px-5 py-2.5 hover:bg-gold-700 shadow-[0_0_0_0_rgba(199,156,72,0.7)] hover:shadow-[0_0_25px_8px_rgba(199,156,72,0.35)] transition" variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
               {t.reservations.submit}
-            </button>
-            <p className="text-sm text-olive-700 mt-3">{t.reservations.note}</p>
-            <div className="flex items-center gap-3 mt-4">
+            </motion.button>
+            <motion.p className="text-sm text-olive-700 mt-3" variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}>{t.reservations.note}</motion.p>
+            <motion.div className="flex items-center gap-3 mt-4" variants={{ hidden: { opacity: 0 }, show: { opacity: 1 } }}>
               <span className="text-olive-800">{t.reservations.quick}</span>
               <a href={`tel:${WHATSAPP_NUMBER}`} className="inline-flex items-center gap-2 text-olive-900 hover:underline"><Phone className="w-4 h-4" /> {WHATSAPP_NUMBER}</a>
               <a href={`https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g, '')}`} target="_blank" className="inline-flex items-center gap-2 text-olive-900 hover:underline"><MessageCircle className="w-4 h-4" /> WhatsApp</a>
-            </div>
-          </form>
+            </motion.div>
+          </motion.form>
           <div className="space-y-4">
             <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=1200&auto=format&fit=crop" alt="Chef at work" className="rounded-xl shadow" />
             <img src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?q=80&w=1200&auto=format&fit=crop" alt="Ambiance" className="rounded-xl shadow" />
@@ -512,25 +596,30 @@ function Reservations({ t }) {
   )
 }
 
-function GoogleReviews() {
+function GoogleReviews({ t }) {
+  const [idx, setIdx] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setIdx((i) => (i + 1) % testimonials.length), 3000)
+    return () => clearInterval(id)
+  }, [])
   return (
     <section className="bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-16">
-        <SectionHeading>Google Reviews</SectionHeading>
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((r, i) => (
-            <div key={i} className="rounded-xl border border-olive-100 p-5 bg-cream-50">
-              <div className="flex items-center gap-2">
-                {Array.from({ length: r.rating }).map((_, idx) => (
-                  <Star key={idx} className="w-4 h-4 text-gold-600 fill-gold-600" />
+        <SectionHeading>{t?.testimonials?.heading || 'Google Reviews'}</SectionHeading>
+        <div className="relative max-w-3xl mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }} className="rounded-xl border border-olive-100 p-6 bg-cream-50 text-center">
+              <div className="flex items-center justify-center gap-1">
+                {Array.from({ length: testimonials[idx].rating }).map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-gold-600 fill-gold-600" />
                 ))}
               </div>
-              <p className="mt-3 text-olive-900">“{r.text}”</p>
-              <p className="mt-2 text-sm text-olive-700">— {r.name}</p>
-            </div>
-          ))}
+              <p className="mt-4 text-olive-900 text-lg">“{testimonials[idx].text}”</p>
+              <p className="mt-2 text-sm text-olive-700">— {testimonials[idx].name}</p>
+            </motion.div>
+          </AnimatePresence>
         </div>
-        <div className="mt-6">
+        <div className="mt-8 text-center">
           <a href="https://www.google.com/maps/search/?api=1&query=Le%20Farfalla%20Restaurant%20Algeria" target="_blank" className="text-olive-900 underline">Open Google Reviews</a>
         </div>
       </div>
@@ -544,7 +633,7 @@ function Contact({ t }) {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24">
         <SectionHeading>{t.contact.heading}</SectionHeading>
         <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 rounded-xl overflow-hidden border border-olive-100">
+          <motion.div className="lg:col-span-2 rounded-xl overflow-hidden border border-olive-100" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
             <iframe
               title="Google Map"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12949.25314040778!2d3.058756!3d36.752887!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128e52b1d1b8b8a1%3A0x7b3d0c0d!2sAlgiers!5e0!3m2!1sen!2sdz!4v1700000000000"
@@ -555,7 +644,7 @@ function Contact({ t }) {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
-          </div>
+          </motion.div>
           <div className="space-y-6">
             <div>
               <h4 className="text-lg font-serif text-olive-900 mb-2 flex items-center gap-2"><MapPin className="w-4 h-4" /> {t.contact.addressTitle}</h4>
@@ -589,29 +678,31 @@ function Contact({ t }) {
 
 function SiteFooter({ t }) {
   return (
-    <footer className="bg-white border-t border-olive-100">
+    <footer className="bg-olive-950 text-cream-50 border-t border-olive-900/40">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
         <div>
-          <p className="text-xl font-serif text-olive-900">Le Farfalla</p>
-          <p className="text-olive-700 mt-1">© {new Date().getFullYear()} Le Farfalla. {t.footer.rights}</p>
+          <p className="text-xl font-serif">Le Farfalla</p>
+          <p className="text-cream-200/80 mt-1">© {new Date().getFullYear()} Le Farfalla. {t.footer.rights}</p>
         </div>
-        <div className="flex gap-6">
+        <div className="flex gap-8">
           <div>
-            <p className="text-sm font-semibold text-olive-900 mb-2">{t.footer.quickLinks}</p>
-            <ul className="space-y-1 text-olive-800">
-              <li><a href="#menu" className="hover:underline">Menu</a></li>
-              <li><a href="#reservations" className="hover:underline">{t.nav.reservations}</a></li>
-              <li><a href="#contact" className="hover:underline">{t.nav.contact}</a></li>
+            <p className="text-sm font-semibold mb-2">{t.footer.quickLinks}</p>
+            <ul className="space-y-1 text-cream-200">
+              <li><a href="#menu" className="hover:text-gold-500 transition">Menu</a></li>
+              <li><a href="#reservations" className="hover:text-gold-500 transition">{t.nav.reservations}</a></li>
+              <li><a href="#contact" className="hover:text-gold-500 transition">{t.nav.contact}</a></li>
             </ul>
           </div>
           <div>
-            <p className="text-sm font-semibold text-olive-900 mb-2">Social</p>
-            <ul className="space-y-1 text-olive-800">
-              <li><a href="#" className="hover:underline">Instagram</a></li>
-              <li><a href="#" className="hover:underline">Facebook</a></li>
-              <li><a href="#" className="hover:underline">TikTok</a></li>
+            <p className="text-sm font-semibold mb-2">Social</p>
+            <ul className="space-y-1 text-cream-200">
+              <li><a href="#" className="inline-flex items-center gap-2 hover:text-gold-500 transition"><Instagram className="w-4 h-4"/> Instagram</a></li>
+              <li><a href="#" className="inline-flex items-center gap-2 hover:text-gold-500 transition"><Facebook className="w-4 h-4"/> Facebook</a></li>
             </ul>
           </div>
+        </div>
+        <div>
+          <a href="#home" className="inline-flex items-center rounded-full border border-cream-200/30 px-4 py-2 hover:bg-cream-50 hover:text-olive-900 transition">{t.footer.backToTop}</a>
         </div>
       </div>
     </footer>
@@ -643,7 +734,7 @@ export default function App() {
         <Gallery t={t} />
         <Specials t={t} />
         <Reservations t={t} />
-        <GoogleReviews />
+        <GoogleReviews t={t} />
         <Contact t={t} />
       </main>
       <SiteFooter t={t} />
